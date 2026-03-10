@@ -9,40 +9,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Install Python dependencies
-        run: |
-          pip install robotframework
-          pip install robotframework-seleniumlibrary
-          pip install robotframework-requests
-          pip install robotframework-databaselibrary
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
 
-      # Dependências que o Chrome precisa para rodar no CI
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            chromium-browser \
-            chromium-chromedriver \
-            libglib2.0-0 \
-            libnss3 \
-            libfontconfig1 \
-            xvfb
+    - name: Install Python dependencies
+      run: |
+        pip install robotframework
+        pip install robotframework-seleniumlibrary
+        pip install robotframework-requests
+        pip install robotframework-databaselibrary
 
-      - name: Verify Chrome install
-        run: |
-          chromium-browser --version
-          chromedriver --version
+    - name: Install Chromium and Driver
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y chromium-browser chromium-chromedriver
 
-      - name: Run Robot Tests
-        env:
-          HEADLESS: True
-        run: |
-          robot --outputdir results tests api_tests db_tests
+        # criar link para o Selenium encontrar o Chrome
+        sudo ln -s /usr/bin/chromium-browser /usr/bin/google-chrome || true
+        sudo ln -s /usr/bin/chromedriver /usr/bin/chromedriver || true
+
+    - name: Verify installation
+      run: |
+        chromium-browser --version
+        chromedriver --version
+
+    - name: Run Robot Tests
+      run: |
+        robot --outputdir results tests api_tests db_tests
