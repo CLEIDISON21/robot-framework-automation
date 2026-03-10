@@ -1,8 +1,10 @@
 venv/
+output/
 reports/
-output.xml
-log.html
-report.html
+allure-results/
+*.deb
 *.pyc
 __pycache__/
-allure-results/
+log.html
+report.html
+output.xml
