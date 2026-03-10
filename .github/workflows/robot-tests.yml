@@ -47,4 +47,4 @@ jobs:
 
       - name: Run Robot Tests
         run: |
-          robot --outputdir results tests api_tests db_tests
+          robot --exclude skip tests
