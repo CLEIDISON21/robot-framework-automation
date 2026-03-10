@@ -9,30 +9,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Instalar Chrome e ChromeDriver
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser chromium-chromedriver
-          sudo ln -sf /usr/bin/chromedriver /usr/local/bin/chromedriver
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
 
-      - name: Instalar dependências
-        run: |
-          pip install robotframework
-          pip install robotframework-seleniumlibrary
-          pip install robotframework-requests
-          pip install robotframework-databaselibrary
+    - name: Install Chrome and ChromeDriver
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y chromium-browser
+        pip install webdriver-manager
 
-      - name: Rodar os testes Robot
-        env:
-          # Garante que o navegador rode em headless
-          ROBOT_BROWSER: chrome
-        run: |
-          robot --variable BROWSER:chrome --variable HEADLESS:true tests api_tests db_tests
+    - name: Install dependencies
+      run: |
+        pip install robotframework
+        pip install robotframework-seleniumlibrary
+        pip install robotframework-requests
+        pip install robotframework-databaselibrary
+
+    - name: Run Robot Tests
+      run: |
+        robot tests api_tests db_tests
