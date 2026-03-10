@@ -9,34 +9,41 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
+      - name: Install Python dependencies
+        run: |
+          pip install robotframework
+          pip install robotframework-seleniumlibrary
+          pip install robotframework-requests
+          pip install robotframework-databaselibrary
 
-    - name: Install dependencies
-      run: |
-        pip install robotframework
-        pip install robotframework-seleniumlibrary
-        pip install robotframework-requests
-        pip install robotframework-databaselibrary
-        pip install webdrivermanager
+      # Dependências que o Chrome precisa para rodar no CI
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            chromium-browser \
+            chromium-chromedriver \
+            libglib2.0-0 \
+            libnss3 \
+            libgconf-2-4 \
+            libfontconfig1 \
+            xvfb
 
-    - name: Install Google Chrome
-      run: |
-        wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-        echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
-        sudo apt-get update
-        sudo apt-get install -y google-chrome-stable
-        sudo ln -sf /usr/bin/google-chrome-stable /usr/bin/google-chrome
+      - name: Verify Chrome install
+        run: |
+          chromium-browser --version
+          chromedriver --version
 
-    - name: Setup ChromeDriver
-      run: python -m webdrivermanager chrome
-
-    - name: Run Robot Tests
-      run: |
-        robot --variable HEADLESS:True tests api_tests db_tests
+      - name: Run Robot Tests
+        env:
+          HEADLESS: True
+        run: |
+          robot --outputdir results tests api_tests db_tests

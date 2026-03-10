@@ -3,10 +3,17 @@ Library    SeleniumLibrary
 
 *** Variables ***
 ${URL}    https://the-internet.herokuapp.com/login
+${BROWSER}    chrome
+${HEADLESS}    ${True}
 
 *** Keywords ***
 Abrir Página de Login
-    Open Browser    ${URL}    chrome
+    ${options}=    Evaluate    sys.modules['selenium.webdriver'].ChromeOptions()    sys, selenium.webdriver
+    Run Keyword If    ${HEADLESS}    Call Method    ${options}    add_argument    --headless
+    Call Method    ${options}    add_argument    --no-sandbox
+    Call Method    ${options}    add_argument    --disable-dev-shm-usage
+
+    Open Browser    ${URL}    ${BROWSER}    options=${options}
     Maximize Browser Window
 
 Preencher Credenciais
