@@ -10,35 +10,41 @@ jobs:
 
     steps:
 
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
 
-    - name: Install Python dependencies
-      run: |
-        pip install robotframework
-        pip install robotframework-seleniumlibrary
-        pip install robotframework-requests
-        pip install robotframework-databaselibrary
+      - name: Install Python dependencies
+        run: |
+          pip install robotframework
+          pip install robotframework-seleniumlibrary
+          pip install robotframework-requests
+          pip install robotframework-databaselibrary
+          pip install webdriver-manager
 
-    - name: Install Chromium and Driver
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y chromium-browser chromium-chromedriver
+      - name: Install Chrome for Testing
+        run: |
+          wget https://storage.googleapis.com/chrome-for-testing-public/126.0.6478.182/linux64/chrome-linux64.zip
+          unzip chrome-linux64.zip
+          sudo mv chrome-linux64 /opt/chrome
+          sudo ln -s /opt/chrome/chrome /usr/bin/google-chrome
 
-        # criar link para o Selenium encontrar o Chrome
-        sudo ln -s /usr/bin/chromium-browser /usr/bin/google-chrome || true
-        sudo ln -s /usr/bin/chromedriver /usr/bin/chromedriver || true
+      - name: Install ChromeDriver
+        run: |
+          wget https://storage.googleapis.com/chrome-for-testing-public/126.0.6478.182/linux64/chromedriver-linux64.zip
+          unzip chromedriver-linux64.zip
+          sudo mv chromedriver-linux64/chromedriver /usr/bin/chromedriver
+          sudo chmod +x /usr/bin/chromedriver
 
-    - name: Verify installation
-      run: |
-        chromium-browser --version
-        chromedriver --version
+      - name: Verify installation
+        run: |
+          google-chrome --version
+          chromedriver --version
 
-    - name: Run Robot Tests
-      run: |
-        robot --outputdir results tests api_tests db_tests
+      - name: Run Robot Tests
+        run: |
+          robot --outputdir results tests api_tests db_tests
