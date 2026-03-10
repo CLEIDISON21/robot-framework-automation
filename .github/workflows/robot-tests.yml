@@ -24,6 +24,7 @@ jobs:
         pip install robotframework-seleniumlibrary
         pip install robotframework-requests
         pip install robotframework-databaselibrary
+        pip install webdrivermanager
 
     - name: Install Google Chrome
       run: |
@@ -32,6 +33,10 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y google-chrome-stable
         sudo ln -sf /usr/bin/google-chrome-stable /usr/bin/google-chrome
+
+    - name: Setup ChromeDriver
+      run: python -m webdrivermanager chrome
+
     - name: Run Robot Tests
       run: |
         robot --variable HEADLESS:True tests api_tests db_tests
