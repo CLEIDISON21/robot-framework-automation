@@ -24,6 +24,6 @@ jobs:
           pip install robotframework-requests
           pip install robotframework-databaselibrary
 
-      - name: Run API and DB Tests
+      - name: Run Robot Tests
         run: |
-          robot --exclude skip --include api --include db tests
+          robot --exclude skip tests
