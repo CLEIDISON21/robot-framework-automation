@@ -1,0 +1,8 @@
+venv/
+reports/
+output.xml
+log.html
+report.html
+*.pyc
+__pycache__/
+allure-results/
