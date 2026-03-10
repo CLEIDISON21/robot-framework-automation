@@ -10,19 +10,13 @@ jobs:
 
     steps:
 
-    - name: Checkout code
+    - name: Checkout repository
       uses: actions/checkout@v3
 
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
-
-    - name: Install Chrome and ChromeDriver
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y chromium-browser
-        pip install webdriver-manager
 
     - name: Install dependencies
       run: |
@@ -31,6 +25,11 @@ jobs:
         pip install robotframework-requests
         pip install robotframework-databaselibrary
 
+    - name: Install Chrome
+      run: |
+        sudo apt update
+        sudo apt install -y chromium-browser chromium-chromedriver
+
     - name: Run Robot Tests
       run: |
-        robot tests api_tests db_tests
+        robot --variable HEADLESS:True tests api_tests db_tests
